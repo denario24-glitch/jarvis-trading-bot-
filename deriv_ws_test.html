@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deriv WebSocket Connection Test</title>
+<style>
+body{font:16px -apple-system,BlinkMacSystemFont,sans-serif;background:#0b1118;color:#edf3f7;margin:0;padding:20px;line-height:1.45}
+main{max-width:780px;margin:auto}h1{font-size:24px}p{color:#b7c5d0}.card{background:#15212d;border:1px solid #344555;border-radius:12px;padding:16px;margin:14px 0;overflow-wrap:anywhere}
+button{font-size:16px;border:0;border-radius:9px;padding:12px 16px;background:#48e0a0;color:#062014;font-weight:700;margin:4px 6px 4px 0}
+.status{font-weight:700}.log{font:13px ui-monospace,monospace;white-space:pre-wrap;overflow-wrap:anywhere;background:#080d12;padding:12px;border-radius:8px;min-height:72px}
+small{color:#a6b5c1}.good{color:#48e0a0}.bad{color:#ff8b93}
+</style>
+</head>
+<body><main>
+<h1>Deriv WebSocket test</h1>
+<p>This test does not sign in, request your balance, or place trades. It tests public connectivity only.</p>
+<div class="card"><b>Test A — Current documented endpoint</b><p><code>wss://ws.derivws.com/websockets/v3?app_id=1089</code></p><div id="sA" class="status">Not tested</div><div id="lA" class="log">Tap “Run tests”.</div></div>
+<div class="card"><b>Test B — Alternate/legacy endpoint check</b><p><code>wss://ws.binaryws.com/websockets/v3?app_id=1089</code></p><div id="sB" class="status">Not tested</div><div id="lB" class="log">Tap “Run tests”.</div></div>
+<button id="run">Run tests</button><button id="clear">Clear results</button>
+<div class="card"><b>How to read this</b><p>If a test says <span class="good">OPEN + PING RESPONSE</span>, the browser can reach that endpoint. If both end with code 1006, the browser/network path may be blocking or aborting the handshake; this test alone cannot prove which network component is responsible. If the socket opens but returns a JSON API error, read that error in the log.</p><small>App ID 1089 is a testing ID shown in Deriv's examples. Register your own app ID before public release.</small></div>
+</main>
+<script>
+const tests=[
+ {id:"A",url:"wss://ws.derivws.com/websockets/v3?app_id=1089"},
+ {id:"B",url:"wss://ws.binaryws.com/websockets/v3?app_id=1089"}
+];
+function set(id,status,log,kind=""){document.getElementById("s"+id).innerHTML=status;document.getElementById("s"+id).className="status "+kind;document.getElementById("l"+id).textContent=log}
+function runOne(t){
+ let log="Connecting to "+t.url+"\n";set(t.id,"CONNECTING",log);
+ let ws;
+ try{ws=new WebSocket(t.url)}catch(e){set(t.id,"CONSTRUCTOR ERROR",log+String(e),"bad");return}
+ let opened=false,gotPing=false,done=false;
+ const finish=(status,kind)=>{if(done)return;done=true;set(t.id,status,log,kind);try{ws.close()}catch{}};
+ const timer=setTimeout(()=>{if(!done){log+="\nTimed out after 8 seconds.\n";finish(opened?"OPENED BUT NO PING RESPONSE":"TIMEOUT","bad")}},8000);
+ ws.onopen=()=>{opened=true;log+="\nWebSocket OPEN event received.\nSending ping and active_symbols...\n";set(t.id,"OPEN — waiting for API response",log);try{ws.send(JSON.stringify({ping:1,req_id:1}));ws.send(JSON.stringify({active_symbols:"brief",req_id:2}))}catch(e){log+="Send error: "+String(e)+"\n"}};
+ ws.onmessage=e=>{let data;try{data=JSON.parse(e.data)}catch{log+="Received non-JSON response.\n";set(t.id,"OPEN — response received",log,"good");return}
+ if(data.msg_type==="ping"||data.ping===1){gotPing=true;log+="PING RESPONSE received.\n";set(t.id,"OPEN + PING RESPONSE",""+log,"good")}
+ else if(data.msg_type==="active_symbols"){log+="ACTIVE_SYMBOLS response: "+((data.active_symbols||[]).length)+" symbols returned.\n";set(t.id,gotPing?"OPEN + PING RESPONSE":"OPEN — API response received",log,"good")}
+ else if(data.error){log+="API ERROR: "+(data.error.code||"") +" "+(data.error.message||"")+"\n";set(t.id,"OPEN — API ERROR",log,"bad")}
+ else{log+="Response: "+JSON.stringify(data).slice(0,500)+"\n";set(t.id,"OPEN — response received",log,"good")}
+ };
+ ws.onerror=()=>{log+="Browser fired WebSocket error (browser hides the detailed cause).\n";set(t.id,"WEBSOCKET ERROR",log,"bad")};
+ ws.onclose=e=>{clearTimeout(timer);log+="\nClose event: code="+e.code+", clean="+e.wasClean+", reason="+(e.reason||"(none)")+"\n";if(!done){done=true;set(t.id,"CLOSED "+e.code,log,"bad")}else{document.getElementById("l"+t.id).textContent=log}};
+}
+document.getElementById("run").onclick=()=>{tests.forEach(runOne)};
+document.getElementById("clear").onclick=()=>{tests.forEach(t=>set(t.id,"Not tested","Tap “Run tests”."))};
+</script></body></html>
