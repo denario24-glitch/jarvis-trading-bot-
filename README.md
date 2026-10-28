@@ -49,3 +49,6 @@ Responsive PWA starter for iPhone/iPad and desktop browsers.
 
 ## Connection troubleshooting update
 The WebSocket URL uses Deriv's documented `ws.derivws.com` host and includes the documented testing app ID `1089`. The app ID identifies the application; it is not an account token. If the connection still fails, test another network (Wi-Fi vs hotspot), then inspect Safari/Web Inspector for the WebSocket close/error details. Do not paste account credentials into the frontend.
+
+## Connection diagnostic build
+This revision sends a public `ping` immediately after the socket opens and shows the WebSocket close code/reason in the status area/toast when the browser provides it. Browser `error` events often do not expose a precise cause; close details can still be unavailable. If it reports a network error without a close code, test a different network and confirm the deployed `app.js` URL contains `wss://ws.derivws.com/websockets/v3?app_id=1089`.

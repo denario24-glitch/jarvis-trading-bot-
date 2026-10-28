@@ -82,7 +82,7 @@ function connectDerivFeed(){
  if(derivSocket&&(derivSocket.readyState===WebSocket.OPEN||derivSocket.readyState===WebSocket.CONNECTING)){toast("Deriv feed is already connecting/connected");return}
  setDerivStatus("CONNECTING","offline");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Connecting…";
  try{derivSocket=new WebSocket(DERIV_WS_URL)}catch(e){setDerivStatus("ERROR","error");toast("Could not start WebSocket");return}
- derivSocket.onopen=()=>{derivConnected=true;setDerivStatus("CONNECTED","online");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Disconnect feed";sendDeriv({active_symbols:"brief",req_id:101})};
+ derivSocket.onopen=()=>{derivConnected=true;setDerivStatus("SOCKET OPEN · TESTING","online");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Disconnect feed";sendDeriv({ping:1,req_id:100});sendDeriv({active_symbols:"brief",req_id:101})};
  derivSocket.onmessage=(event)=>{
   let d;try{d=JSON.parse(event.data)}catch{return}
   if(d.error){setDerivStatus("API ERROR","error");toast(d.error.message||"Deriv API error");return}
@@ -105,8 +105,8 @@ function connectDerivFeed(){
    updateDerivDisplay();
   }
  };
- derivSocket.onerror=()=>{setDerivStatus("CONNECTION ERROR","error");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Reconnect Deriv feed";toast("WebSocket failed; check network and retry")};
- derivSocket.onclose=()=>{derivConnected=false;setDerivStatus("DISCONNECTED","offline");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Connect Deriv feed";updateDerivDisplay()};
+ derivSocket.onerror=()=>{setDerivStatus("WEBSOCKET ERROR · SEE CLOSE DETAILS","error");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Reconnect Deriv feed";toast("WebSocket error. Check the status for close details.")};
+ derivSocket.onclose=(event)=>{derivConnected=false;const code=event?.code??"unknown",reason=event?.reason||"no reason provided";setDerivStatus("CLOSED "+code,"error");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Connect Deriv feed";if($("#derivSourceLabel"))$("#derivSourceLabel").textContent="Socket closed";if($("#derivSymbolLabel"))$("#derivSymbolLabel").textContent=String(reason).slice(0,90);toast("Deriv socket closed: "+code+" · "+reason);updateDerivDisplay()};
 }
 function disconnectDerivFeed(){if(derivSocket){try{derivSocket.close()}catch{}derivSocket=null}derivConnected=false;setDerivStatus("DISCONNECTED","offline");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Connect Deriv feed";updateDerivDisplay()}
 $("#connectDerivBtn")?.addEventListener("click",()=>{if(derivSocket&&(derivSocket.readyState===WebSocket.OPEN||derivSocket.readyState===WebSocket.CONNECTING))disconnectDerivFeed();else connectDerivFeed()});
