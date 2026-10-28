@@ -22,7 +22,7 @@ small{color:#a6b5c1}.good{color:#48e0a0}.bad{color:#ff8b93}
 </main>
 <script>
 const tests=[
- {id:"A",url:"wss://api.derivws.com/trading/v1/options/ws/public"}
+ {id:"A",url:"wss://api.derivws.com/trading/v1/options/ws/public"},
  {id:"B",url:"wss://ws.binaryws.com/websockets/v3?app_id=1089"}
 ];
 function set(id,status,log,kind=""){document.getElementById("s"+id).innerHTML=status;document.getElementById("s"+id).className="status "+kind;document.getElementById("l"+id).textContent=log}
