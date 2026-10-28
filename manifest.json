@@ -1,0 +1,10 @@
+{
+  "name": "Trading JARVIS AI",
+  "short_name": "JARVIS AI",
+  "description": "Demo-first trading dashboard prototype",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#080d13",
+  "theme_color": "#080d13",
+  "icons": []
+}

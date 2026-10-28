@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#080d13">
+<meta name="description" content="Trading JARVIS — demo-first trading dashboard and paper-trading prototype.">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="styles.css">
+<title>Trading JARVIS AI</title>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">J</div><div><b>TRADING JARVIS</b><small>AI TRADING LAB</small></div></div>
+    <nav id="nav">
+      <button class="nav-item active" data-page="overview">▦ <span>Overview</span></button>
+      <button class="nav-item" data-page="scanner">⌕ <span>AI Scanner</span></button>
+      <button class="nav-item" data-page="bots">◈ <span>Paper Bots</span></button>
+      <button class="nav-item" data-page="journal">▤ <span>Trade Journal</span></button>
+      <button class="nav-item" data-page="analytics">⌁ <span>Analytics</span></button>
+      <button class="nav-item" data-page="risk">⛨ <span>Risk Manager</span></button>
+    </nav>
+    <div class="side-bottom"><span class="dot"></span> DEMO MODE ONLY<small>No broker connected</small></div>
+  </aside>
+  <main class="main">
+    <header class="topbar"><button id="menuBtn" class="menu-btn" aria-label="Open navigation">☰</button><div><div class="eyebrow">TRADING WORKSPACE</div><h1 id="pageTitle">Overview</h1></div><div class="top-actions"><span class="demo-pill"><i></i> PAPER TRADING</span><button id="resetBtn" class="ghost">Reset demo</button></div></header>
+    <section class="notice"><b>Prototype data</b><span>Prices, signals, trades, and performance are simulated locally. Nothing here is live market data or a real broker order.</span></section>
+    <section id="page-overview" class="page active">
+      <div class="welcome"><div><div class="eyebrow green">YOUR PERSONAL TRADING ASSISTANT</div><h2>Trade with a plan.<br><em>Not with emotion.</em></h2><p>Scan setups, test rules, and build consistency before risking real money.</p></div><div class="orb"><span>J</span><i></i></div></div>
+      <div class="metric-grid">
+        <article class="metric"><div class="metric-label">PAPER BALANCE <span>ⓘ</span></div><strong id="balanceMetric">$10,000.00</strong><small class="positive">Starting demo equity</small></article>
+        <article class="metric"><div class="metric-label">OPEN PAPER TRADES</div><strong id="openMetric">0</strong><small>Simulated positions</small></article>
+        <article class="metric"><div class="metric-label">CLOSED TRADES</div><strong id="closedMetric">0</strong><small>Saved in this browser</small></article>
+        <article class="metric"><div class="metric-label">WIN RATE</div><strong id="winMetric">—</strong><small>Only after closed trades</small></article>
+      </div>
+      <div class="section-head"><div><h3>Market watch</h3><p>Illustrative prices · refreshes locally</p></div><button class="text-btn" data-goto="scanner">Open scanner →</button></div>
+      <div class="market-grid" id="marketCards"></div>
+      <div class="two-col">
+        <article class="panel"><div class="panel-head"><div><h3>Recent activity</h3><p>Your latest paper-trading actions</p></div><span class="tag">LOCAL</span></div><div id="recentActivity" class="activity-list"></div></article>
+        <article class="panel"><div class="panel-head"><div><h3>JARVIS checklist</h3><p>Before considering any setup</p></div></div><div class="checklist"><div><span>01</span><p><b>Market structure</b><small>Is price making higher highs or lower lows?</small></p></div><div><span>02</span><p><b>Liquidity & displacement</b><small>Is there a sweep and clear move away?</small></p></div><div><span>03</span><p><b>Defined risk</b><small>Is the stop-loss set before entry?</small></p></div><div><span>04</span><p><b>Journal the reason</b><small>Record the setup, not just the outcome.</small></p></div></div></article>
+      </div>
+    </section>
+    <section id="page-scanner" class="page">
+      <div class="page-intro"><div><div class="eyebrow green">RULE-BASED SCAN</div><h2>AI Market Scanner</h2><p>This starter uses a transparent illustrative rule score—not a trained AI model.</p></div><button class="primary" id="scanBtn">⟳ Scan markets</button></div>
+      <div class="filters panel"><label>Market<select id="scanMarket"><option value="all">All markets</option><option>Volatility 100 (1s)</option><option>EUR/USD</option><option>XAU/USD (Gold)</option></select></label><label>Timeframe<select id="scanTf"><option>15m</option><option>5m</option><option>1h</option><option>4h</option></select></label><label>Minimum score<select id="minScore"><option value="50">50 / 100</option><option value="60">60 / 100</option><option value="70">70 / 100</option><option value="80">80 / 100</option></select></label></div>
+      <div id="scanResults" class="scan-results"></div>
+      <div class="disclaimer">A score is not a probability of profit. Validate any rules against historical data and out-of-sample tests. Signals may be wrong.</div>
+    </section>
+    <section id="page-bots" class="page">
+      <div class="page-intro"><div><div class="eyebrow green">AUTOMATION SANDBOX</div><h2>Paper Bots</h2><p>Run simple rule-based paper strategies without placing broker orders.</p></div><span class="demo-pill"><i></i> LIVE ORDERS DISABLED</span></div>
+      <div class="two-col">
+        <article class="panel"><div class="panel-head"><div><h3>Configure bot</h3><p>Local simulation only</p></div><span class="tag">V0.1</span></div>
+          <form id="botForm" class="stack-form">
+            <label>Bot name<input id="botName" value="JARVIS Structure Scout" maxlength="40" required></label>
+            <label>Market<select id="botMarket"><option>Volatility 100 (1s)</option><option>EUR/USD</option><option>XAU/USD (Gold)</option></select></label>
+            <label>Strategy<select id="botStrategy"><option value="structure">Structure + pullback (illustrative)</option><option value="fib">Fibonacci 61.8% pullback (illustrative)</option><option value="sweep">Liquidity sweep (illustrative)</option></select></label>
+            <div class="form-row"><label>Risk per trade (%)<input id="botRisk" type="number" min="0.1" max="1" step="0.1" value="0.5" required></label><label>Reward:risk<input id="botRR" type="number" min="1" max="5" step="0.5" value="2" required></label></div>
+            <button class="primary full" type="submit">＋ Create paper bot</button>
+          </form>
+        </article>
+        <article class="panel"><div class="panel-head"><div><h3>Your bots</h3><p>Paused by default until you start them</p></div></div><div id="botList" class="bot-list"></div></article>
+      </div>
+      <div class="panel mt"><div class="panel-head"><div><h3>How paper execution works</h3><p>Important limitations</p></div></div><ol class="plain-list"><li>Bot generates a simulated entry from demo rules.</li><li>Position size uses your demo balance and chosen risk percentage.</li><li>Outcome is simulated; it does not use actual tick-by-tick broker data.</li><li>Do not judge profitability from this prototype.</li></ol></div>
+    </section>
+    <section id="page-journal" class="page">
+      <div class="page-intro"><div><div class="eyebrow green">BUILD YOUR PROCESS</div><h2>Trade Journal</h2><p>Record paper trades and lessons while they are fresh.</p></div><button id="exportBtn" class="ghost">↓ Export CSV</button></div>
+      <div class="panel"><div class="panel-head"><div><h3>Add journal entry</h3><p>Entries are stored on this device/browser only.</p></div></div>
+        <form id="journalForm" class="journal-form">
+          <label>Date<input id="jDate" type="date" required></label><label>Market<select id="jMarket"><option>Volatility 100 (1s)</option><option>EUR/USD</option><option>XAU/USD (Gold)</option></select></label><label>Direction<select id="jDirection"><option>BUY</option><option>SELL</option><option>WAIT</option></select></label>
+          <label>Setup type<select id="jSetup"><option>Structure break / retest</option><option>Fibonacci pullback</option><option>Liquidity sweep</option><option>FVG / displacement</option><option>Other</option></select></label><label>Planned R:R<input id="jRR" type="number" min="0" step="0.1" placeholder="e.g. 2"></label><label>Result (R)<input id="jResult" type="number" step="0.1" placeholder="e.g. -1 or 2"></label>
+          <label class="wide">Trade thesis<textarea id="jThesis" rows="2" placeholder="What was the setup and why?"></textarea></label><label class="wide">Lesson / emotion<textarea id="jLesson" rows="2" placeholder="What did you learn? Were you following your plan?"></textarea></label>
+          <button class="primary" type="submit">Save journal entry</button>
+        </form>
+      </div>
+      <div class="panel mt"><div class="panel-head"><div><h3>Journal history</h3><p id="journalCount">0 entries</p></div><button class="text-btn" id="clearJournal">Clear journal</button></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Market</th><th>Direction</th><th>Setup</th><th>R:R</th><th>Result (R)</th><th>Thesis / lesson</th></tr></thead><tbody id="journalRows"></tbody></table></div></div>
+    </section>
+    <section id="page-analytics" class="page">
+      <div class="page-intro"><div><div class="eyebrow green">MEASURE THE PROCESS</div><h2>Performance Analytics</h2><p>Based on closed paper trades and journal entries saved here.</p></div></div>
+      <div class="metric-grid"><article class="metric"><div class="metric-label">NET PAPER P&L</div><strong id="pnlMetric">$0.00</strong><small>Simulated outcomes only</small></article><article class="metric"><div class="metric-label">WIN RATE</div><strong id="analyticsWin">—</strong><small>Closed paper trades</small></article><article class="metric"><div class="metric-label">PROFIT FACTOR</div><strong id="pfMetric">—</strong><small>Gross wins ÷ gross losses</small></article><article class="metric"><div class="metric-label">JOURNAL ENTRIES</div><strong id="entryMetric">0</strong><small>Saved locally</small></article></div>
+      <div class="two-col"><article class="panel"><div class="panel-head"><div><h3>Demo equity path</h3><p>Illustrative closed-trade balance history</p></div></div><div id="equityChart" class="chart"></div></article><article class="panel"><div class="panel-head"><div><h3>Trading discipline</h3><p>Keep risk and process visible</p></div></div><div id="disciplineStats" class="stats-list"></div></article></div>
+      <div class="disclaimer">Small samples can mislead. Include spreads, slippage, commissions, and realistic fills before evaluating any real strategy.</div>
+    </section>
+    <section id="page-risk" class="page">
+      <div class="page-intro"><div><div class="eyebrow green">PROTECT CAPITAL FIRST</div><h2>Risk Manager</h2><p>Position sizing calculator using values you enter. Not broker-specific sizing.</p></div></div>
+      <div class="two-col"><article class="panel"><div class="panel-head"><div><h3>Position size calculator</h3><p>Estimate maximum planned loss</p></div></div><form id="riskForm" class="stack-form">
+        <label>Account balance ($)<input id="riskBalance" type="number" min="1" value="10000" required></label><label>Risk per trade (%)<input id="riskPercent" type="number" min="0.1" max="2" step="0.1" value="0.5" required></label><label>Entry price<input id="riskEntry" type="number" min="0.000001" step="any" value="1000" required></label><label>Stop-loss price<input id="riskStop" type="number" min="0.000001" step="any" value="990" required></label><button class="primary full" type="submit">Calculate risk</button>
+      </form></article><article class="panel result-panel"><div class="eyebrow green">CALCULATION</div><div class="result-number" id="riskAmount">$50.00</div><p>Maximum planned loss at selected risk</p><div class="result-row"><span>Stop distance</span><b id="riskDistance">10.00</b></div><div class="result-row"><span>Risk percentage</span><b id="riskPercentOut">0.50%</b></div><div class="result-row"><span>Units (simple price units only)</span><b id="riskUnits">5.00</b></div><small class="muted">This units figure is not a valid lot-size calculation for every instrument. Forex, Gold and Deriv contracts have different contract specifications and payout mechanics.</small></article></div>
+      <div class="panel mt"><h3>Safety rules</h3><div class="checklist"><div><span>01</span><p><b>Risk small</b><small>Use a pre-defined risk cap; no sizing formula guarantees a maximum loss under gaps or execution errors.</small></p></div><div><span>02</span><p><b>Stop after your limit</b><small>Set a daily loss threshold and stop trading when reached.</small></p></div><div><span>03</span><p><b>No martingale</b><small>Never increase size to recover losses.</small></p></div><div><span>04</span><p><b>Protect API credentials</b><small>Never put a broker token or secret in browser JavaScript.</small></p></div></div></div>
+    </section>
+    <footer>TRADING JARVIS AI <span>Prototype v0.1 · Demo only · No financial advice</span></footer>
+  </main>
+</div>
+<div id="toast" class="toast" role="status"></div>
+<script src="app.js"></script>
+</body></html>
