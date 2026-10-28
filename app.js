@@ -82,7 +82,7 @@ function connectDerivFeed(){
  if(derivSocket&&(derivSocket.readyState===WebSocket.OPEN||derivSocket.readyState===WebSocket.CONNECTING)){toast("Deriv feed is already connecting/connected");return}
  derivDiagnosticMessage="Opening "+DERIV_WS_URL;setDerivStatus("CONNECTING","offline");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Connecting…";updateDerivDisplay();
  try{derivSocket=new WebSocket(DERIV_WS_URL)}catch(e){setDerivStatus("ERROR","error");toast("Could not start WebSocket");return}
- derivSocket.onopen=()=>{derivConnected=true;derivDiagnosticMessage="Socket opened; waiting for Deriv response";setDerivStatus("SOCKET OPEN · TESTING","online");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Disconnect feed";updateDerivDisplay();sendDeriv({ping:1,req_id:100});sendDeriv({active_symbols:"brief",req_id:101})};
+ derivSocket.onopen=()=>{derivConnected=true;derivDiagnosticMessage="Socket opened; waiting for Deriv response";setDerivStatus("SOCKET OPEN · TESTING","online");if($("#connectDerivBtn"))$("#connectDerivBtn").textContent="Disconnect feed";updateDerivDisplay();sendDeriv({ping:1,req_id:100});sendDeriv({ticks_history:DERIV_SYMBOL,end:"latest",count:100,style:"candles",granularity:300,req_id:102});sendDeriv({ticks:DERIV_SYMBOL,subscribe:1,req_id:103});
  derivSocket.onmessage=(event)=>{
   let d;try{d=JSON.parse(event.data)}catch{return}
   if(d.error){setDerivStatus("API ERROR","error");toast(d.error.message||"Deriv API error");return}
