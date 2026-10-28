@@ -52,3 +52,6 @@ The WebSocket URL uses Deriv's documented `ws.derivws.com` host and includes the
 
 ## Connection diagnostic build
 This revision sends a public `ping` immediately after the socket opens and shows the WebSocket close code/reason in the status area/toast when the browser provides it. Browser `error` events often do not expose a precise cause; close details can still be unavailable. If it reports a network error without a close code, test a different network and confirm the deployed `app.js` URL contains `wss://ws.derivws.com/websockets/v3?app_id=1089`.
+
+## Diagnostic visibility fix v0.2.1
+This patch preserves the WebSocket close code/reason in the scanner's Data source details. Earlier code accidentally overwrote that message during display refresh, so `CLOSED 1006` appeared while the reason was hidden. This patch does not itself fix a network/handshake failure; it makes the next result more informative.
