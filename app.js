@@ -11,7 +11,7 @@ const assets=[
 // Deriv public market-data state. No account token or order endpoint is used.
 let derivSocket=null, derivCandles=[], derivLivePrice=null, derivConnected=false, derivSymbolVerified=false, derivLastEpoch=null;
 const DERIV_SYMBOL="1HZ100V"; // Volatility 100 Index (1s); verified against active_symbols when connected.
-const DERIV_WS_URL="wss://ws.binaryws.com/websockets/v3";
+const DERIV_WS_URL="wss://ws.derivws.com/websockets/v3?app_id=1089"; // Deriv docs use 1089 as a testing app ID; register your own before public release.
 function save(){localStorage.setItem(STORE,JSON.stringify(state));renderAll()}
 function money(n){return (n<0?"−":"")+"$"+Math.abs(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2})}
 function toast(s){const t=$("#toast");t.textContent=s;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),2300)}

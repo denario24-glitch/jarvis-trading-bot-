@@ -17,7 +17,7 @@ Responsive PWA starter for iPhone/iPad and desktop browsers.
 **Still illustrative/simulated:** Forex and Gold prices/signals remain placeholders; paper trade results and bot outcomes are randomized simulations; the rule score is a simple example rule, not AI/ML, not backtested, and not a claim of profitability. No real/demo broker orders are placed. The app's `$10,000` balance is a local paper balance, not a Deriv account balance.
 
 ## API behavior used
-- Public WebSocket: `wss://ws.binaryws.com/websockets/v3` (no account authorization for public market data).
+- Public WebSocket: `wss://ws.derivws.com/websockets/v3?app_id=1089` (the official docs use app ID 1089 for testing; register your own app ID before public release). Public market-data requests do not require account authentication.
 - `active_symbols: "brief"` verifies current symbol availability.
 - `ticks_history` with `style: "candles"`, `granularity: 300`, `count: 100`, `end: "latest"` requests 5-minute candles.
 - `ticks` with `subscribe: 1` subscribes to new quotes.
@@ -46,3 +46,6 @@ Responsive PWA starter for iPhone/iPad and desktop browsers.
 - Ticks stream: https://developers.deriv.com/docs/data/ticks/
 - Ticks history: https://developers.deriv.com/docs/data/ticks-history/
 - Deriv market-data workflow examples: https://developers.deriv.com/docs/workflows/
+
+## Connection troubleshooting update
+The WebSocket URL uses Deriv's documented `ws.derivws.com` host and includes the documented testing app ID `1089`. The app ID identifies the application; it is not an account token. If the connection still fails, test another network (Wi-Fi vs hotspot), then inspect Safari/Web Inspector for the WebSocket close/error details. Do not paste account credentials into the frontend.
