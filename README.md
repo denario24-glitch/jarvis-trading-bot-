@@ -1,56 +1,48 @@
-# Trading JARVIS AI — Demo-first prototype
+# Trading JARVIS AI v0.2 — Deriv public market data
 
-A responsive web app/PWA starter that runs on iPhone, iPad, and desktop browsers. This is an original prototype, not a clone of another site's code or branding.
+Responsive PWA starter for iPhone/iPad and desktop browsers.
 
-## What works now
-- Responsive navigation and dashboard.
-- Locally stored demo balance, paper positions, and simulated closed-trade outcomes.
-- Transparent, hard-coded illustrative scanner scores for three placeholder markets.
-- Create/pause/delete paper bot configurations; manually simulate one paper outcome.
-- Trade journal with local browser storage and CSV export.
-- Simple risk calculator.
-- Basic local performance metrics and illustrative equity bars.
-- PWA manifest/service worker for install-like behavior when hosted over HTTPS.
+## New in v0.2
+- Connect/Disconnect button for Deriv's public WebSocket market-data endpoint.
+- Checks the current `active_symbols` list for `1HZ100V` before subscribing.
+- Requests historical 5-minute OHLC candles (`granularity: 300`, count 100).
+- Subscribes to ticks for live quotes and aggregates incoming ticks into local 5-minute candles.
+- Displays live quote, candle direction/time, and a compact recent-candle strip.
+- Derives a transparent rule-based BUY/SELL/WAIT label and score from recent five-minute candles when enough data is available.
+- No API token, account login, balance request, proposal, buy, or sell request is used.
 
-## Simulated / not connected
-- Prices and market changes are illustrative constants, not live quotes.
-- Scanner scores are hard-coded demonstration rules, not AI/ML and not validated trading signals.
-- Paper trades and bot outcomes are randomized simulations; no broker order is placed.
-- No Deriv, MT4/MT5, forex broker, Gold feed, account, or authentication is connected.
-- Position-sizing "units" is generic arithmetic, not a broker-specific lot-size calculator.
-- LocalStorage data stays in the current browser profile and is not synced between devices.
+## What is real vs not real
+**Real when connected:** quote ticks and OHLC history received from Deriv's public market-data WebSocket, if the endpoint is reachable and `1HZ100V` appears in the returned active-symbol list. The app shows a connection status and verifies the symbol instead of assuming success.
 
-## Run locally
-1. Extract the ZIP.
-2. Open `index.html` in a modern browser. Most dashboard features work; service-worker/PWA install requires HTTPS or localhost.
-3. For an iPhone/iPad install-style experience, host the folder on a static HTTPS host (e.g. GitHub Pages) and open the URL in Safari.
-4. Safari Share → Add to Home Screen.
+**Still illustrative/simulated:** Forex and Gold prices/signals remain placeholders; paper trade results and bot outcomes are randomized simulations; the rule score is a simple example rule, not AI/ML, not backtested, and not a claim of profitability. No real/demo broker orders are placed. The app's `$10,000` balance is a local paper balance, not a Deriv account balance.
 
-## Free hosting using GitHub Pages (iPhone/iPad)
-1. Sign in/create a GitHub account.
-2. Create a new public repository, e.g. `trading-jarvis-ai`.
-3. Upload `index.html`, `styles.css`, `app.js`, `manifest.json`, and `sw.js` from this ZIP (you can upload the ZIP's extracted files using GitHub's mobile website or the GitHub app where supported).
-4. In the repository, open Settings → Pages.
-5. Under build/deployment, choose deploy from branch, select `main` and `/ (root)`, then Save.
-6. Wait for GitHub Pages to publish the URL. Open it in Safari, test it, then Share → Add to Home Screen.
-7. The app's local data is saved per browser/device. Export your journal CSV regularly if you need a backup.
+## API behavior used
+- Public WebSocket: `wss://ws.binaryws.com/websockets/v3` (no account authorization for public market data).
+- `active_symbols: "brief"` verifies current symbol availability.
+- `ticks_history` with `style: "candles"`, `granularity: 300`, `count: 100`, `end: "latest"` requests 5-minute candles.
+- `ticks` with `subscribe: 1` subscribes to new quotes.
+- Symbol used: `1HZ100V` (Volatility 100 Index (1s)); this is also used in Deriv's published market-data workflow example. The code still checks `active_symbols` at runtime and displays an error if it is not listed.
+- No authenticated demo account is required for public market data. This is separate from authenticated demo-account trading, which is not implemented.
 
-## Security architecture for a real connected version
-- Front end: this responsive PWA; display quotes/signals and allow user controls.
-- Backend: a small HTTPS API (e.g. a serverless function) handles provider authorization, market-data requests, strategy execution, and audit logs.
-- Secrets: broker/API tokens live only in server-side secret storage, never in `app.js`, HTML, GitHub, or browser LocalStorage.
-- Broker connection: implement a provider-specific OAuth/token flow after reviewing the provider's current API terms and supported account types. Begin with demo-only credentials and minimum permissions.
-- Execution: server-side order service must enforce max risk/trade, max daily loss, symbol allowlist, duplicate-order protection, rate limits, and a kill switch. Require explicit opt-in before any future live-trading mode.
-- Reliability: log each signal, quote timestamp, order request/response, and error; reject stale quotes; handle disconnects safely.
-- Validation: historical backtest, walk-forward/out-of-sample test, paper trading, and monitoring before considering live use.
+## Deploy the upgrade from iPad
+1. Extract this ZIP in Files.
+2. Open your GitHub repository: `https://github.com/denario24-glitch/jarvis-trading-bot-`.
+3. For each of these existing root files, open it and choose the pencil/edit option, replace its complete contents with the matching file from this v0.2 package, then commit: `index.html`, `styles.css`, `app.js`, `sw.js`, and `README.md`. (You may also use Add file → Upload files and upload these updated files together; GitHub may ask you to confirm replacing existing files.)
+4. Commit message: `Upgrade JARVIS with Deriv public 5m data`.
+5. In Settings → Pages, keep `main` and `/(root)`. Wait for the deployment to finish.
+6. Open the website in Safari and reload. If an old version remains, close the tab and reopen it; the updated service worker uses a new cache version.
+7. Open AI Scanner and tap **Connect Deriv feed**. Wait for status `CONNECTED`, a symbol verification message, a live quote, and candle history. If the API doesn't return the symbol or connection fails, the app reports that rather than pretending data is live.
 
-## Important next build milestones
-1. Replace placeholder quotes with a real-time data provider for each selected market.
-2. Define exact contract specs and supported symbols for Deriv Volatility, forex, and Gold.
-3. Implement the scanner as transparent, testable strategy rules; do not call it AI unless a real model is built and evaluated.
-4. Build backend demo-account connection and paper execution using real quote streams.
-5. Add login, encrypted server-side storage, database sync, and data export.
-6. Only after extensive demo validation, assess broker order execution and add a disabled-by-default live switch with hard risk limits.
+## Security and limits
+- Public feed is read-only. No token is requested or stored.
+- Never paste Deriv passwords, API tokens, or account secrets into the app's front-end files.
+- This build intentionally has no order execution. Keep demo testing separate from live trading.
+- Data availability, supported symbols, and API behavior can change; confirm using Deriv's official docs and the live `active_symbols` response.
+- The 5-minute label is a basic rule demonstration, not financial advice or an expectation of profit.
 
-## Disclaimer
-This is educational software, not financial advice or a promise of profit. Simulation results do not predict live performance. Trading can lose money.
+## Official API references
+- API overview: https://developers.deriv.com/docs/intro/api-overview/
+- Active symbols: https://developers.deriv.com/docs/data/active-symbols/
+- Ticks stream: https://developers.deriv.com/docs/data/ticks/
+- Ticks history: https://developers.deriv.com/docs/data/ticks-history/
+- Deriv market-data workflow examples: https://developers.deriv.com/docs/workflows/

@@ -1,7 +1,7 @@
 {
   "name": "Trading JARVIS AI",
   "short_name": "JARVIS AI",
-  "description": "Demo-first trading dashboard prototype",
+  "description": "Demo-first trading dashboard with Deriv public market data",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#080d13",
